@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buba.boot1806a.dao.userMapper">
+
+    <!--登录-->
+<!--tbUser login(String username);-->
+    <select id="login" resultType="tbUser">
+      select * from tb_user where usercode=#{username}
+    </select>
+
+    <!--修改密码-->
+    <!--int upPwd(@Param("id") Integer id,@Param("passWord") String passWord);-->
+    <update id="upPwd">
+      UPDATE tb_user SET password = #{passWord} where id= #{id}
+    </update>
+
+    <!--用户管理__删除-->
+    <!--int delUser(Integer id);-->
+    <delete id="delUser">
+        delete from tb_user where id=#{id}
+    </delete>
+
+    <!--用户管理__增加-->
+    <!--int addUser(tbUser user);-->
+    <insert id="addUser" parameterType="tbUser">
+
+		INSERT INTO tb_user(usercode,username,password,tel,sex,level,dept_id,area_id,email)
+		VALUES(#{usercode},#{username},#{password},#{tel},#{sex},#{level},#{deptId},#{areaId},#{email});
+
+	</insert>
+
+    <!--用户管理__修改-->
+    <!--int updateUser(tbUser user);-->
+    <update id="updateUser" parameterType="tbUser">
+
+ 		UPDATE tb_user SET
+ 		usercode =#{usercode},username=#{username},password= #{password},tel= #{tel},sex = #{sex},email= #{email}
+ 		WHERE id = #{id};
+
+ 	</update>
+
+    <!--用户管理__单查-->
+    <!--tbUser findUserById(String id);-->
+    <select id="findUserById" resultType="tbUser">
+        select *from tb_user where id=#{id}
+    </select>
+
+</mapper>
+
+
+
+

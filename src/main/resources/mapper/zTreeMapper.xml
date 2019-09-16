@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buba.boot1806a.dao.zTreeMapper">
+
+
+     <!--根据省市县不同权限查询-->
+    <!--县的权限-->
+    <!-- List<Items> findXianItems(@Param("deptId")String deptId, @Param("startTime")String startTime, @Param("endTime")String endTime); -->
+    <select id="findXianItems" resultType="items">
+        SELECT items.*,
+        plan.dept_name,
+        plan.num_activities,
+        items.num_actual/plan.num_activities as zhixinglv
+        FROM items,plan
+        <where>
+            items.plan_id=plan.id and items.dept_id = #{deptId}
+            <if test="startTime!=null and startTime!=''">
+                AND items.createtime &gt;= #{startTime}
+            </if>
+
+            <if test="endTime!=null and endTime!=''">
+                AND items.createtime &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--市的权限-->
+    <!-- List<Items> findShiItems(@Param("areaId")String areaId, @Param("startTime")String startTime, @Param("endTime")String endTime); -->
+    <select id="findShiItems" resultType="items">
+
+        SELECT
+        plan.dept_name,
+        items.dept_id,
+        SUM(plan.num_activities) as num_activities,
+        SUM(items.num_actual) as num_actual,
+        num_actual/num_activities as zhixinglv,
+        SUM(items.new_client) as new_client,
+        SUM(items.old_client) as old_client,
+        SUM(items.yx_client) as yx_client,
+        SUM(items.money) as money
+        FROM items,plan
+        <where>
+            items.plan_id=plan.id and items.area_id = #{areaId}
+            <if test="startTime!=null and startTime!=''">
+                AND items.createtime &gt;= #{startTime}
+            </if>
+
+            <if test="endTime!=null and endTime!=''">
+                AND items.createtime &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY items.dept_id
+    </select>
+
+
+    <!--省的权限-->
+    <!-- List<Items> findShengItems(String startTime, String endTime); -->
+    <select id="findShengItems" resultType="items">
+        SELECT
+        tb_area.area_name as dept_name,
+        SUM(plan.num_activities) as num_activities,
+        SUM(items.num_actual) as num_actual,
+        num_actual/num_activities as zhixinglv,
+        SUM(items.new_client) as new_client,
+        SUM(items.old_client) as old_client,
+        SUM(items.yx_client) as yx_client,
+        SUM(items.money) as money
+        FROM items,plan,tb_area
+        <where>
+            items.plan_id=plan.id and tb_area.id = items.area_id and tb_area.parent_id = 1
+            <if test="startTime!=null and startTime!=''">
+                AND items.createtime &gt;= #{startTime}
+            </if>
+
+            <if test="endTime!=null and endTime!=''">
+                AND items.createtime &lt;= #{endTime}
+            </if>
+        </where>
+        GROUP BY items.area_id
+    </select>
+
+    <!--用户信息的树-->
+    <!--List<tbDept> findAllDept(int id);-->
+    <select id="findAllDept" resultType="tbDept">
+ 		SELECT * FROM tb_dept WHERE area_id = #{id}
+ 	</select>
+
+    <!--用户信息1-->
+    <!--List<tbUser> findParentUser(String id);-->
+
+    <select id="findParentUser" resultType="tbUser">
+
+ 		SELECT * FROM tb_user WHERE area_id = #{id} and level in (1,2)
+
+ 	</select>
+
+
+    <!--用户信息2-->
+    <!--List<tbUser> findXianUser(String id);-->
+    <select id="findXianUser" resultType="tbUser">
+
+ 		SELECT * FROM tb_user WHERE dept_id = #{id}
+ 	</select>
+
+    <!--用户信息3-->
+    <!--List<tbArea> findAllArea();-->
+    <select id="findAllArea" resultType="tbArea">
+        select * from tb_area
+    </select>
+</mapper>
+
+
+
+

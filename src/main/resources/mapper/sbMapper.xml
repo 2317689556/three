@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.buba.boot1806a.dao.sbMapper">
+
+
+    <!--预报数据的提交-->
+    <!--int addPlan(Plan p);-->
+    <insert id="addPlan">
+
+    INSERT INTO plan(activities_name,num_activities,dept_id,dept_name,area_code,area_id,available,type,start_time,end_time,timestamp)
+	VALUES(#{activitiesName},#{numActivities},#{deptId},#{deptName},#{areaCode},#{areaId},#{available},#{type},#{startTime},#{endTime},NOW());
+
+    </insert>
+
+    <!---->
+    <!-- List<Plan> findPlan(Integer deptId); -->
+    <select id="findPlan" resultType="plan">
+
+  		SELECT * FROM plan WHERE available in(1,2,3) and dept_id = #{deptId}
+
+  </select>
+
+    <!--根据id单查-->
+    <!--tbDept findDeptById(Integer deptId);-->
+    <select id="findDeptById" resultType="tbDept">
+
+  		select * from tb_dept where id = #{deptId};
+
+ 	</select>
+
+
+    <!--市级用户__审核数据-->
+    <!--List<Plan> findPlanOnAudit(String areaId);-->
+    <select id="findPlanOnAudit" resultType="plan">
+
+  		SELECT * FROM plan WHERE available in(1,2,3) AND area_id = #{areaId}
+
+  </select>
+
+</mapper>
+
+
+
+
